@@ -1,64 +1,171 @@
-<<<<<<< HEAD
-# Sankrypt
-Sankrypt is a next-generation API-based security and encryption system inspired by the timeless principle of Sankofa — retrieving the wisdom of the past to safeguard the future. It provides a secure, scalable, and intelligent platform for managing passwords, secrets, and authentication processes across applications and devices.
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛡️ Sankrypt API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Ancient wisdom, modern encryption.**
 
-## About Laravel
+Sankrypt is a secure, API-driven password and secret management system that merges **African heritage** with **modern cryptographic design**.  
+Inspired by the Akan concept of **Sankofa** — *“return and get it”* — Sankrypt learns from the principles of ancient guardianship to protect digital assets today.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌍 Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Sankrypt provides a **secure, modular API layer** for managing:
+- 🔐 Encrypted vaults (passwords, keys, or sensitive data)
+- 👤 User authentication and identity
+- 🧠 Configurable security and access policies
 
-## Learning Laravel
+The system is designed for **frontend clients** or **third-party services** that need a strong cryptographic backend with API-based control.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Built using **Laravel** and **Sanctum**, it follows modern principles of **zero-knowledge design** and **defense-in-depth**.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ⚙️ Features
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Category | Description |
+|-----------|-------------|
+| **Authentication** | Token-based authentication using Laravel Sanctum |
+| **Vault System** | Encrypted, user-scoped storage for sensitive items |
+| **Access Logging** | Every action is logged with IP, user agent, and status |
+| **User Management** | Secure registration, login, logout, and password rotation |
+| **Security Settings** | Configurable user preferences and system hardening |
+| **Categorized Vaults** | Organize and retrieve vault items by category |
+| **Error-Safe API Design** | Consistent JSON responses and error handling |
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🧩 Tech Stack
 
-## Contributing
+- **Framework:** Laravel 10+ (PHP 8.2+)  
+- **Auth:** Laravel Sanctum (token-based)  
+- **Database:** MySQL / PostgreSQL  
+- **Encryption:** Client-side encryption; backend stores only encrypted blobs  
+- **Logging:** AccessLog model for all user actions  
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🚀 API Endpoints
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 🔑 Authentication Routes
 
-## Security Vulnerabilities
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| `POST` | `/api/register` | Register a new user with email and `auth_key_hash` |
+| `POST` | `/api/login` | Log in using email + derived `auth_key_hash` |
+| `POST` | `/api/logout` | Revoke the current user’s token |
+| `GET` | `/api/user` | Get current authenticated user details |
+| `POST` | `/api/auth/change-password` | Change authentication key hash |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+### 👤 User Routes
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> fb4883e (Initial commit for Sankrypt API system)
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| `PUT` | `/api/user/preferences` | Update user preferences (JSON structure) |
+| `GET` | `/api/user/security-settings` | Retrieve security settings and login history |
+
+---
+
+### 🏺 Vault Routes
+
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| `GET` | `/api/vault` | List all vault items for current user |
+| `POST` | `/api/vault` | Store a new encrypted vault item |
+| `GET` | `/api/vault/{id}` | Retrieve specific vault item |
+| `PUT` | `/api/vault/{id}` | Update an existing vault item |
+| `DELETE` | `/api/vault/{id}` | Delete vault item |
+| `GET` | `/api/vault/category/{category}` | Get vault items by category |
+
+---
+
+## 🔐 Security Philosophy
+
+Sankrypt is built on **privacy-first** principles:
+
+- **Zero-Knowledge Backend:**  
+  The server never sees or stores plain credentials — only encrypted blobs and salted hashes.
+
+- **Auditable Actions:**  
+  Every API interaction creates an `AccessLog` entry, recording:
+  - user ID  
+  - IP address  
+  - user agent  
+  - action performed  
+  - success or failure  
+  - optional details  
+
+- **Cryptographic Integrity:**  
+  Each vault item includes a `data_hash` field (128-char) to detect tampering.
+
+---
+
+## 🧠 Data Models
+
+### `User`
+| Field | Type | Description |
+|-------|------|-------------|
+| `email` | string | Unique user email |
+| `auth_key_hash` | string(64) | Hash of the derived client-side key |
+| `preferences` | JSON | Optional user settings |
+| `security_settings` | JSON | Security configuration (2FA, lock, etc.) |
+| `password_changed_at` | timestamp | When password last changed |
+| `last_login_at` | timestamp | Last login time |
+
+---
+
+### `Vault`
+| Field | Type | Description |
+|-------|------|-------------|
+| `user_id` | foreign key | Owner |
+| `category` | string | Logical grouping (e.g., “banking”, “work”) |
+| `encrypted_data` | text | Encrypted JSON or blob |
+| `encryption_salt` | string | Salt used for encryption |
+| `data_hash` | string(128) | Integrity hash |
+| `version` | int | Version control for updates |
+| `last_accessed_at` | timestamp | Auto-updated on access |
+
+---
+
+### `AccessLog`
+| Field | Type | Description |
+|-------|------|-------------|
+| `user_id` | foreign key | User performing the action |
+| `action` | string | Action name (e.g., `vault_store`, `login`) |
+| `ip_address` | string | IP of the request |
+| `user_agent` | string | Client agent |
+| `success` | boolean | Action result |
+| `details` | text | Optional context |
+
+---
+
+## 🧭 Example Workflow
+
+1. **User registers** with email + a client-generated `auth_key_hash`.
+2. **Frontend stores encryption key locally** (never sent to API).
+3. User logs in → receives a **Sanctum API token**.
+4. User encrypts data locally → sends encrypted blob to `/api/vault`.
+5. Sankrypt stores and indexes the encrypted item.
+6. On retrieval, Sankrypt returns the blob → client decrypts locally.
+7. All actions are logged in `AccessLog`.
+
+---
+
+## 🧰 Developer Setup
+
+### Prerequisites
+- PHP 8.2+
+- Composer
+- MySQL/PostgreSQL
+- Laravel CLI
+
+### Installation
+
+```bash
+git clone https://github.com/HGiorgis/Sankrypt.git
+cd Sankrypt
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate

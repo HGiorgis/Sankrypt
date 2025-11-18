@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: sankrypt-backend
+    env: docker
+    docker:
+      dockerfile: Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+    plan: free
+    numInstances: 1
+
+databases:
+  - name: sankrypt-db
+    plan: free
+    databaseName: sankrypt_db
+    user: neondb_owner

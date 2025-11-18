@@ -6,17 +6,17 @@ use App\Models\User;
 use App\Models\AccessLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-
     private function generateApiKey(): string
     {
         return 'SK' . strtoupper(Str::random(32));
     }
+
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -35,23 +35,22 @@ class AuthController extends Controller
             $user = User::create([
                 'email' => $request->email,
                 'auth_key_hash' => $request->auth_key_hash,
-                'security_settings' => json_encode([
+                'security_settings' => [
                     'session_timeout' => 30,
                     'two_factor_enabled' => false,
                     'max_login_attempts' => 5,
                     'auto_lock' => true,
-                ]),
+                ],
                 'password_changed_at' => now(),
                 'api_key' => $this->generateApiKey(),
             ]);
 
-            // Log the registration
             AccessLog::create([
                 'user_id' => $user->id,
                 'action' => 'register',
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'success' => true,
+                'success' => TRUE,
                 'details' => 'User registered successfully'
             ]);
 
@@ -69,6 +68,11 @@ class AuthController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+            \Log::error('Registration failed', [
+                'error' => $e->getMessage(),
+                'email' => $request->email
+            ]);
+
             return response()->json([
                 'error' => 'Registration failed',
                 'details' => $e->getMessage()
@@ -85,8 +89,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => 'Validation failed',
-                'details' => $validator->errors()
+                'error' => 'Invalid input data'
             ], 422);
         }
 
@@ -94,35 +97,27 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (!$user) {
-                // Don't create AccessLog for non-existent users since user_id cannot be null
-                \Log::warning('Login attempt for non-existent user', [
-                    'email' => $request->email,
-                    'ip' => $request->ip()
-                ]);
-
                 return response()->json([
-                    'error' => 'Invalid credentials'
+                    'error' => 'Invalid email or password'
                 ], 401);
             }
 
-            // Verify the auth key hash (this is the derived key hash from client)
             if (!hash_equals($user->auth_key_hash, $request->auth_key_hash)) {
                 AccessLog::create([
-                    'user_id' => $user->id, // Use the actual user ID
+                    'user_id' => $user->id,
                     'action' => 'login',
                     'ip_address' => $request->ip(),
                     'user_agent' => $request->userAgent(),
-                    'success' => false,
-                    'details' => 'Invalid auth key'
+                    'success' => FALSE, // Changed from 0 to false
+                    'details' => 'Invalid password'
                 ]);
 
                 return response()->json([
-                    'error' => 'Invalid credentials'
+                    'error' => 'Invalid email or password'
                 ], 401);
             }
 
             $user->update(['last_login_at' => now()]);
-
             $token = $user->createToken('auth-token')->plainTextToken;
 
             AccessLog::create([
@@ -130,7 +125,7 @@ class AuthController extends Controller
                 'action' => 'login',
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'success' => true,
+                'success' => TRUE, // Changed from 1 to true
                 'details' => 'Login successful'
             ]);
 
@@ -139,7 +134,8 @@ class AuthController extends Controller
                 'user' => [
                     'id' => $user->id,
                     'email' => $user->email,
-                    'security_settings' => $user->security_settings
+                    'security_settings' => $user->security_settings,
+                    'api_key' => $user->api_key, 
                 ],
                 'token' => $token
             ]);
@@ -147,16 +143,14 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             \Log::error('Login failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'email' => $request->email
             ]);
             
             return response()->json([
-                'error' => 'Login failed',
-                'details' => $e->getMessage()
+                'error' => 'Login failed. Please try again.'
             ], 500);
         }
     }
-
     public function logout(Request $request): JsonResponse
     {
         try {
@@ -165,7 +159,7 @@ class AuthController extends Controller
                 'action' => 'logout',
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'success' => true,
+                'success' => TRUE,
                 'details' => 'Logout successful'
             ]);
 

@@ -13,6 +13,11 @@ class ApiKeyAuth
      */
     public function handle(Request $request, Closure $next)
     {
+        // Handle CORS preflight requests
+        if ($request->isMethod('OPTIONS')) {
+            return response()->json('OK', 200);
+        }
+
         $apiKey = $request->header('X-API-KEY');
 
         // Allow public routes like register/login without API key

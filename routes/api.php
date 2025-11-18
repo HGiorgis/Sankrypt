@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VaultController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SpeechToTextController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,16 +11,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Global API key middleware + rate limiting
-Route::middleware(['api.key', 'throttle:api'])->group(function () {
+// Global API key middleware
+Route::middleware(['api.key'])->group(function () {
 
-    // Public routes
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1'); // 10 requests per minute
-    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1'); // 5 requests per minute
+    // Public routes with numeric rate limiting
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
-
-    // Protected routes (Sanctum + API key + rate limiting)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Protected routes (Sanctum + API key)
+    Route::middleware(['auth:sanctum'])->group(function () {
 
         // Auth
         Route::post('/logout', [AuthController::class, 'logout']);

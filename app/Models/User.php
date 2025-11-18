@@ -34,9 +34,32 @@ class User extends Authenticatable
 
     protected $casts = [
         'security_settings' => 'array',
+        'preferences' => 'array', // Add this if you have preferences
         'last_login_at' => 'datetime',
         'password_changed_at' => 'datetime',
     ];
+
+    // Remove the boot method if it's causing issues, or fix it:
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+            
+            // Ensure security_settings is properly formatted
+            if (empty($model->security_settings)) {
+                $model->security_settings = [
+                    'session_timeout' => 30,
+                    'two_factor_enabled' => false,
+                    'max_login_attempts' => 5,
+                    'auto_lock' => true,
+                ];
+            }
+        });
+    }
 
     public function vaults()
     {
@@ -46,16 +69,5 @@ class User extends Authenticatable
     public function accessLogs()
     {
         return $this->hasMany(AccessLog::class);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) \Illuminate\Support\Str::uuid();
-            }
-        });
     }
 }
